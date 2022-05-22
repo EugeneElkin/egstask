@@ -10,7 +10,7 @@ describe('Search input', () => {
         const searchInputContainer = screen.queryByTestId('searchInputContainer');
         expect(searchInputContainer).toBeInTheDocument();
     });
-    it('contains entered balue', () => {
+    it('contains entered value', () => {
         render(<SearchInput></SearchInput>, { searchText: 'Some repo request' });
         const searchInputContainer = screen.queryByTestId('searchInputContainer');
         expect(searchInputContainer).toHaveValue('Some repo request');

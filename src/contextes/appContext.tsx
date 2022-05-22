@@ -1,18 +1,21 @@
 import { createContext, Dispatch, ReactNode, useReducer } from 'react';
 
 export enum APP_ACTION_TYPE {
+    ADD_TO_BASKET = 'ADD_TO_BASKET',
+    SET_REPOSITORIES = 'SET_REPOSITORIES',
     SET_CONTRIBUTORS = 'SET_CONTRIBUTORS',
+    SET_SEARCH_TEXT = 'SET_SEARCH_TEXT'
 }
 
 export interface IAppAction {
     type: APP_ACTION_TYPE;
-    payload: IContributor[] | IRepository[];
+    payload: IContributor | IContributor[] | IRepository[] | string | null;
 }
 
 export interface IAppState {
-    searchText?: string;
-    repositories?: IRepository[];
-    contributors?: IContributor[];
+    searchText: string;
+    repositories?: IRepository[] | null;
+    contributors?: IContributor[] | null;
     basketItems?: IContributor[];
 }
 
@@ -23,7 +26,7 @@ export interface IRepository {
 
 export interface IContributor {
     id: string,
-    name: string
+    login: string
 }
 
 interface IAppContext {
@@ -33,10 +36,33 @@ interface IAppContext {
 
 const AppReducer = (state: IAppState, action: IAppAction): IAppState => {
     switch (action.type) {
+        case APP_ACTION_TYPE.ADD_TO_BASKET: {
+            const newItem = action.payload as IContributor;
+            const existedItem = state.basketItems?.find(item => item.id === newItem.id);
+            return {
+                ...state,
+                basketItems: (state.basketItems?.length
+                    ? (existedItem ? [...state.basketItems] : [...state.basketItems, action.payload])
+                    : [action.payload]
+                ) as IContributor[]
+            };
+        }
+        case APP_ACTION_TYPE.SET_REPOSITORIES: {
+            return {
+                ...state,
+                repositories: action.payload ? [...action.payload as IRepository[]] : null
+            };
+        }
         case APP_ACTION_TYPE.SET_CONTRIBUTORS: {
             return {
                 ...state,
-                contributors: [...action.payload]
+                contributors: action.payload ? [...action.payload as IContributor[]] : null
+            };
+        }
+        case APP_ACTION_TYPE.SET_SEARCH_TEXT: {
+            return {
+                ...state,
+                searchText: action.payload as string
             };
         }
         default: {
@@ -46,6 +72,7 @@ const AppReducer = (state: IAppState, action: IAppAction): IAppState => {
 };
 
 export const initialAppState: IAppState = {
+    searchText: ''
 }
 
 const AppContext = createContext<IAppContext>({} as IAppContext);

@@ -1,0 +1,14 @@
+.searchForm {
+    display: flex;
+    flex-direction: row;
+}
+.contentBox {
+    display: flex;
+    flex-direction: row;
+}
+.listContent {
+    flex: 2;
+}
+.basketContent {
+    flex: 1;
+}
